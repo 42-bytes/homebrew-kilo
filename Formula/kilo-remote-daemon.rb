@@ -1,18 +1,14 @@
 class KiloRemoteDaemon < Formula
   desc "macOS daemon for Kilo Remote - control Kilo Code from your iPhone"
   homepage "https://kilo.42bytes.eu"
-  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.1.0/kilo-remote-daemon-0.1.0.tar.gz"
-  sha256 "57865ae73f3963850c12a2d44cf4dce68b8f1de4bd9b9eab9703076d964d7a50"
+  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.2.0/kilo-remote-daemon-0.2.0.tar.gz"
+  sha256 "0e94b6354b5024d636ccdea3e39575c146732f4f1c0a193f2b01c3bac45f6471"
   license "MIT"
 
   depends_on "node@22"
   depends_on :macos
 
   def install
-    system "npm", "ci", "--omit=dev"
-    system "npm", "rebuild", "node-pty", "--build-from-source"
-    system "npx", "tsc"
-
     libexec.install Dir["dist/*"]
     libexec.install "node_modules"
     libexec.install "package.json"
@@ -40,7 +36,7 @@ class KiloRemoteDaemon < Formula
         Then scan the QR code with the iOS app.
 
       To start the daemon as a background service:
-        brew services start 42bytes/kilo/kilo-remote-daemon
+        brew services start 42-bytes/kilo/kilo-remote-daemon
 
       Or load the launchd plist manually:
         cp #{etc}/com.kilo.remote-daemon.plist ~/Library/LaunchAgents/
