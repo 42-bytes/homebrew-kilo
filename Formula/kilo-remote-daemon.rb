@@ -1,8 +1,8 @@
 class KiloRemoteDaemon < Formula
   desc "macOS daemon for Kilo Remote - control Kilo Code from your iPhone"
   homepage "https://kilo.42bytes.eu"
-  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.2.0/kilo-remote-daemon-0.2.0.tar.gz"
-  sha256 "0e94b6354b5024d636ccdea3e39575c146732f4f1c0a193f2b01c3bac45f6471"
+  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.3.0/kilo-remote-daemon-0.3.0.tar.gz"
+  sha256 "1f766207527564e9d192a41413a823d8a63afa161df68ad03e5c5bddad1cccc0"
   license "MIT"
 
   depends_on "node@22"
@@ -13,9 +13,34 @@ class KiloRemoteDaemon < Formula
     libexec.install "node_modules"
     libexec.install "package.json"
 
+    node = Formula["node@22"].opt_bin/"node"
+
     (bin/"kiloremote").write <<~SH
       #!/bin/bash
-      exec "#{Formula["node@22"].opt_bin}/node" "#{libexec}/index.js" "$@"
+      NODE="#{node}"
+      LIBEXEC="#{libexec}"
+      case "$1" in
+        init|pair|setup|unlock|audit|status)
+          exec "$NODE" "$LIBEXEC/cli.js" "$@"
+          ;;
+        "")
+          exec "$NODE" "$LIBEXEC/index.js"
+          ;;
+        *)
+          echo "Usage: kiloremote <init|pair|setup|unlock|audit|status>"
+          echo ""
+          echo "Commands:"
+          echo "  init     Interactive setup wizard"
+          echo "  pair     Generate pairing QR code for iPhone app"
+          echo "  setup    Configure TOTP two-factor authentication"
+          echo "  unlock   Unlock daemon after panic lockdown"
+          echo "  audit    Show local audit log and state"
+          echo "  status   Show current daemon configuration"
+          echo ""
+          echo "Run without arguments to start the daemon."
+          exit 1
+          ;;
+      esac
     SH
 
     etc.install "com.kilo.remote-daemon.plist"
@@ -23,24 +48,17 @@ class KiloRemoteDaemon < Formula
 
   def caveats
     <<~EOS
-      Configuration:
-        Create #{etc}/kilo-remote-daemon.env with your settings:
-          RELAY_URL=https://kilo-remote-relay.vercel.app
-          RELAY_API_KEY=your-api-key
-          ACCOUNT_EMAIL=your@email.com
-          KILO_SERVER_HOST=127.0.0.1
-          KILO_SERVER_PORT=4096
+      Get started:
+        kiloremote init
 
-      Pairing:
-        Run: kiloremote pair
-        Then scan the QR code with the iOS app.
+      This will walk you through connecting to the relay,
+      setting your API key, and configuring Kilo Code.
 
-      To start the daemon as a background service:
+      After setup, pair your iPhone:
+        kiloremote pair
+
+      Then start the daemon:
         brew services start 42-bytes/kilo/kilo-remote-daemon
-
-      Or load the launchd plist manually:
-        cp #{etc}/com.kilo.remote-daemon.plist ~/Library/LaunchAgents/
-        launchctl load ~/Library/LaunchAgents/com.kilo.remote-daemon.plist
     EOS
   end
 
@@ -54,6 +72,6 @@ class KiloRemoteDaemon < Formula
   end
 
   test do
-    assert_match "kilo-remote-daemon", shell_output("#{bin}/kiloremote --version 2>&1", 1)
+    assert_match "Usage:", shell_output("#{bin}/kiloremote help 2>&1", 1)
   end
 end
