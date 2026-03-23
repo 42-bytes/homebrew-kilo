@@ -1,8 +1,8 @@
 class KiloRemoteDaemon < Formula
   desc "macOS daemon for Kilo Remote - control Kilo Code from your iPhone"
   homepage "https://kilo.42bytes.eu"
-  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.8.0/kilo-remote-daemon-0.8.0.tar.gz"
-  sha256 "9760906fdd6505920728a219e415f984477063005fdbbbe38d966466d478b026"
+  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.8.1/kilo-remote-daemon-0.8.1.tar.gz"
+  sha256 "619e9240a8790043bfb8f238099e475c99f77df67046516d27e50c1c3091a209"
   license "MIT"
 
   depends_on "node@22"
