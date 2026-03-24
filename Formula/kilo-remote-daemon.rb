@@ -1,8 +1,8 @@
 class KiloRemoteDaemon < Formula
   desc "macOS daemon for Kilo Remote - control Kilo Code from your iPhone"
   homepage "https://kilo.42bytes.eu"
-  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.8.2/kilo-remote-daemon-0.8.2.tar.gz"
-  sha256 "cf0b891bf53c56177d3be5c6252ea8cff58a162722966dfa00ea2791bae951c6"
+  url "https://github.com/42-bytes/kilo-remote-daemon/releases/download/v0.9.0/kilo-remote-daemon-0.9.0.tar.gz"
+  sha256 "025f0a35ae3b09b56a80b2aac7e0fe80c92fd0288737476b1346d8343e3fe505"
   license "MIT"
 
   depends_on "node@22"
@@ -24,7 +24,7 @@ class KiloRemoteDaemon < Formula
       NODE="#{node}"
       LIBEXEC="#{libexec}"
       case "$1" in
-        init|start|stop|pair|setup|revoke|unlock|audit|status)
+        init|start|stop|pair|setup|revoke|unlock|audit|status|logs)
           exec "$NODE" "$LIBEXEC/cli.js" "$@"
           ;;
         "")
@@ -43,6 +43,7 @@ class KiloRemoteDaemon < Formula
           echo "  unlock   Unlock daemon after panic lockdown"
           echo "  audit    Show local audit log and state"
           echo "  status   Show current daemon configuration"
+          echo "  logs     Show recent daemon log output"
           exit 1
           ;;
       esac
